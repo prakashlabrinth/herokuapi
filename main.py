@@ -59,13 +59,47 @@ class EmployeeDetails(Base):
     BankName = Column("bankname", String)
     BankAccountNumber = Column("bankaccountnumber", Integer)
     PanCard = Column("pancard", String)
-    IFSCcode = Column("ifsccode", String, primary_key=True)
+    IFSCcode = Column("ifsccode", String)
     Department = Column("department", String)
     SubDepartment = Column("subdepartment", String)
-    EmployeeId = Column("employeeid", String)
+    EmployeeId = Column("employeeid", String, primary_key=True)
 
+class PersonalInfo(Base):
+    __tablename__ = 'personalinfo'
+    Name =Column("name",String)
+    Age =Column("age",Integer)
+    DOB = Column("dob", Date)
+    EmployeeId = Column("employeeid", String, primary_key=True)
 
+class FinancialInfo(Base):
+    __tablename__ = 'financialinfo'
+    Salary = Column("salary", String)
+    BankName = Column("bankname", String)
+    BankAccountNumber = Column("bankaccountnumber", Integer)
+    PanCard = Column("pancard", String)
+    IFSCcode = Column("ifsccode", String)
+    EmployeeId = Column("employeeid", String, primary_key=True)
 
+class Department(Base):
+    __tablename__ = 'department'
+    Department = Column("department", String)
+    SubDepartment = Column("subdepartment", String)
+    EmployeeId = Column("employeeid", String, primary_key=True)
+
+@app.route('/viewall', methods=['GET'])
+def viewall():
+    dealercode = request.args.get("dealercode")
+    result = session.query(ProductEnquiryForms).filter(ProductEnquiryForms.Senttodealer=='flase',
+                                                       ProductEnquiryForms.DealerCode==dealercode).all()
+    result = [item.__dict__ for item in result]
+    print("Result data {}".format(result))
+    mobileno_container = []
+    for item in result:
+        item.pop('_sa_instance_state')
+        mobileno_container.append(item.get('MobileNo'))
+        print("mobileNumbers {}".format(mobileno_container))
+    enable_sent_flag(mobileno_container)
+    return str(result)
 
 @app.route('/employeedetails', methods=['GET'])
 def view():
@@ -76,6 +110,70 @@ def view():
     for item in result:
         item.pop('_sa_instance_state')
     return str(result)
+
+@app.route('/postpersonalinfo', methods=['POST'])
+def postpersonalinfo():
+    request_body = request.get_json(force=True)
+    for index,item in enumerate(request_body):
+        record = PersonalInfo(Name = item["name"],
+                                     Age = item["age"],
+                                     DOB = item["dob"],
+                                     EmployeeId =item["employeeid"])
+        session.add_all([record])
+    session.commit()
+    return ("data inserted in PersonalInfo table successfully")
+
+@app.route('/postfinancialinfo', methods=['POST'])
+def postfinancialinfo():
+    request_body = request.get_json(force=True)
+    for index,item in enumerate(request_body):
+        record = FinancialInfo(
+                                     Salary = item["salary"],
+                                     BankName = item["bankname"],
+                                     BankAccountNumber =item["bankaccountnumber"],
+                                     PanCard =item["pancard"],
+                                     IFSCcode = item["ifsccode"],
+                                     EmployeeId =item["employeeid"])
+        session.add_all([record])
+    session.commit()
+    return ("data inserted in FinancialInfo table successfully")
+
+@app.route('/postdepartment', methods=['POST'])
+def postdepartment():
+    request_body = request.get_json(force=True)
+    for index,item in enumerate(request_body):
+        record = Department(
+                                     Department = item["department"],
+                                     SubDepartment = item["subdepartment"],
+                                     EmployeeId =item["employeeid"])
+        session.add_all([record])
+    session.commit()
+    return ("data inserted in Department table successfully")
+
+@app.route('/putemprecord', methods=['PUT'])
+def putemprecord():
+     Emp_Id = request.args.get("employeeid")
+     request_body = request.get_json(force=True)
+     try:
+         result = session.query(Department).filter(Department.EmployeeId==Emp_Id)\
+            .update({Department.Department: request_body[0]["department"]})
+         session.commit()
+         return str(result)
+     finally:
+         session.close()
+
+@app.route('/delemprecord',methods = ['DELETE'])
+def delrecodelemprecordrd():
+    from flask import request
+    print("parameter is {}".format(request.args))
+    Emp_ID = request.args.get("employeeid")
+    try:
+        result = session.query(Department).filter(Department.EmployeeId == Emp_ID).delete()
+        session.commit()
+        return str(result)
+    finally:
+        pass
+
 
 
 @app.route('/', methods=['GET'])
