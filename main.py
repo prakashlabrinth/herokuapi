@@ -13,7 +13,7 @@ app = Flask(__name__)
 api = Api(app)
 
 Base  = declarative_base()
-database_url= "postgres://qgkjurmwjwydgg:42005525a3cc0f084dd180ca84774b11f2d928ef9ea08914b0db93c702587b1f@ec2-3-215-40-176.compute-1.amazonaws.com:5432/d19nap4pif7of0"
+database_url= "postgres://zfxzhztsbsrduy:1527523af8a571421e576d53365e5d836069210d9148e37ce93280145c6a4b65@ec2-3-215-40-176.compute-1.amazonaws.com:5432/dru2o63lvhorn"
 
 #disable sqlalchemy pool using nullpool as by default postgress has its own pool
 engine = create_engine(database_url,echo=True, poolclass=NullPool)
