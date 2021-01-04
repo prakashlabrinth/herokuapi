@@ -24,32 +24,6 @@ Session = sessionmaker(bind=engine)
 session = Session()
 print("Session ---> {}".format(session))
 
-class ProductEnquiryForms(Base):
-    __tablename__ = 'productenquiryforms'
-    CustomerName =Column("customername",String)
-    Gender =Column("gender",String)
-    Age =Column("age",Integer)
-    Occupation =Column("occupation",String)
-    MobileNo =Column("mobileno",Integer,primary_key=True)
-    Email =Column("email",String)
-    VechicleModel =Column("vechiclemodel",String)
-    State =Column("state",String)
-    District =Column("district",String)
-    City =Column("city",String)
-    ExistingVehicle =Column("existingvehicle",String)
-    DealerState =Column("dealerstate",String)
-    DealerTown =Column("dealertown",String)
-    Dealer =Column("dealer", String)
-    BriefAboutEnquiry =Column("briefaboutenquiry", String)
-    ExpectedDateofPurchase =Column("expecteddateofpurchase", Date)
-    IntendedUsage =Column("intendedusage", String)
-    Senttodealer = Column("senttodealer", BOOLEAN)
-    DealerCode = Column("dealercode",String)
-    Comment = Column("comment", String)
-    Createddate = Column("createddate", Date)
-    isPurchased = Column("ispurchased", BOOLEAN)
-    ProductsPurchasedCount = Column("productspurchasedcount", String)
-
 class EmployeeDetails(Base):
     __tablename__ = 'employee'
     Name =Column("name",String)
@@ -114,7 +88,7 @@ def postpersonalinfo():
                                      EmployeeId =item["employeeid"])
         session.add_all([record])
     session.commit()
-    return ("data inserted in PersonalInfo table successfully")
+    return ("data inserted in PersonalInfo table successfully*****")
 
 @app.route('/postfinancialinfo', methods=['POST'])
 def postfinancialinfo():
